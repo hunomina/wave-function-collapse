@@ -121,26 +121,6 @@ impl Direction {
             Self::Right => Self::Left,
         }
     }
-
-    pub fn next(&self) -> Self {
-        match self {
-            Self::Up => Self::Right,
-            Self::Right => Self::Down,
-            Self::Down => Self::Left,
-            Self::Left => Self::Up,
-        }
-    }
-}
-
-impl From<&Direction> for usize {
-    fn from(val: &Direction) -> Self {
-        match val {
-            Direction::Up => 0,
-            Direction::Right => 1,
-            Direction::Down => 2,
-            Direction::Left => 3,
-        }
-    }
 }
 
 #[cfg(test)]
