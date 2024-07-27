@@ -7,6 +7,7 @@ use macroquad::{
 use serde_json::Value;
 
 use core::f64;
+use std::collections::HashMap;
 
 use crate::{
     map::{
@@ -16,7 +17,7 @@ use crate::{
     CELL_WIDTH,
 };
 
-pub async fn draw_map(map: &Map) {
+pub async fn draw_map(map: &Map, textures: &HashMap<String, Texture2D>) {
     for line in 0..map.size {
         for column in 0..map.size {
             let x = column as f32 * CELL_WIDTH;
@@ -24,10 +25,9 @@ pub async fn draw_map(map: &Map) {
             let cell = map.get_cell(line, column).unwrap();
             if cell.collapsed {
                 let cell_value = cell.value().unwrap();
-                let image = load_image(&cell_value.file).await.unwrap();
-                let texture = Texture2D::from_image(&image);
+                let texture = textures.get(&cell_value.file).unwrap();
                 draw_texture_ex(
-                    &texture,
+                    texture,
                     x,
                     y,
                     WHITE,
@@ -49,14 +49,22 @@ pub async fn draw_map(map: &Map) {
     }
 }
 
-pub fn load_tiles(file: String) -> Vec<CellValue> {
+pub async fn load_tiles(file: String) -> (Vec<CellValue>, HashMap<String, Texture2D>) {
     let file_content = std::fs::read_to_string(file).expect("Unable to read tiles file");
     let content: Value = serde_json::from_str(&file_content).expect("Unable to parse tiles file");
 
     let mut tiles = vec![];
+    let mut textures = HashMap::new();
 
     for tile in content.as_array().unwrap() {
         let file = tile["file"].as_str().unwrap().to_string();
+
+        let image = load_image(&file)
+            .await
+            .unwrap_or_else(|_| panic!("Impossible to load image {}", file));
+        let texture = Texture2D::from_image(&image);
+        textures.insert(file.clone(), texture);
+
         let ports: Vec<Vec<usize>> = tile["ports"]
             .as_array()
             .unwrap()
@@ -90,5 +98,5 @@ pub fn load_tiles(file: String) -> Vec<CellValue> {
         tiles.extend(possible_rotations);
     }
 
-    tiles
+    (tiles, textures)
 }

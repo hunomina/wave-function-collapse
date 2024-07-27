@@ -21,12 +21,13 @@ fn conf() -> Conf {
 
 #[macroquad::main(conf)]
 async fn main() {
-    let mut map = map::Map::new(MAP_SIZE, load_tiles(String::from(TILES_CONFIG)));
+    let (tiles, textures) = load_tiles(String::from(TILES_CONFIG)).await;
+    let mut map = map::Map::new(MAP_SIZE, tiles);
 
     loop {
         clear_background(BLACK);
 
-        draw_map(&map).await;
+        draw_map(&map, &textures).await;
 
         if !map.is_solved() {
             map.collapse_next_cell();
