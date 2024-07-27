@@ -6,8 +6,9 @@ use utils::{draw_map, load_tiles};
 use macroquad::prelude::*;
 
 const TILES_CONFIG: &str = "tiles.json";
-const CELL_WIDTH: f32 = 50.0;
 const MAP_SIZE: usize = 20;
+const MAX_WINDOW_SIZE: i32 = 1000;
+const CELL_WIDTH: f32 = (MAX_WINDOW_SIZE / MAP_SIZE as i32) as f32;
 
 fn conf() -> Conf {
     Conf {
