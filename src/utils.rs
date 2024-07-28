@@ -2,7 +2,9 @@ use macroquad::{
     color::*,
     math::vec2,
     shapes::draw_rectangle_lines,
+    text::{draw_text, measure_text},
     texture::{draw_texture_ex, load_image, DrawTextureParams, Texture2D},
+    window::{screen_height, screen_width},
 };
 use serde_json::Value;
 
@@ -14,7 +16,7 @@ use crate::{
         cell::{CellValue, Ports},
         Map,
     },
-    CELL_WIDTH,
+    CELL_WIDTH, MAP_SIZE,
 };
 
 pub async fn draw_map(map: &Map, textures: &HashMap<String, Texture2D>) {
@@ -99,4 +101,19 @@ pub async fn load_tiles(file: String) -> (Vec<CellValue>, HashMap<String, Textur
     }
 
     (tiles, textures)
+}
+
+pub fn build_map(tiles: &Vec<CellValue>) -> Map {
+    Map::new(MAP_SIZE, tiles.clone())
+}
+
+pub fn draw_error_message(message: &str) {
+    let text_size = measure_text(message, None, 30, 1.0);
+    draw_text(
+        message,
+        screen_width() / 2. - text_size.width / 2.,
+        screen_height() / 2. - text_size.height / 2.,
+        30.0,
+        WHITE,
+    );
 }

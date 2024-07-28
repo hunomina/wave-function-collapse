@@ -197,7 +197,7 @@ impl Map {
             .collect()
     }
 
-    pub fn collapse_next_cell(&mut self) {
+    pub fn collapse_next_cell(&mut self) -> Result<(), &str> {
         let mut rng = ::rand::prelude::thread_rng();
 
         let cells_with_minimum_entropy = self.get_cells_with_minimum_entropy();
@@ -231,8 +231,7 @@ impl Map {
             .collect::<Vec<_>>();
 
         if matching_possibilities.is_empty() {
-            panic!("Can not be solved");
-            // todo
+            return Err("Can not be solved");
         }
 
         let random_chosen_value = matching_possibilities
@@ -246,5 +245,7 @@ impl Map {
         random_cell_to_collapse.possible_values = vec![random_chosen_value];
 
         self.update_neighbours_of_collapsed_cell(cell_line, cell_column);
+
+        Ok(())
     }
 }

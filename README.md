@@ -7,5 +7,5 @@
 ## TODOs
 
 - [ ] Add more tests
-- [ ] Handle errors (or not?) like backtracking
+- [ ] Add backtracking when collapse fails
 - [ ] WASM
